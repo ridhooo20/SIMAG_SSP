@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Application;
+use App\Models\Position;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class ApplicationController extends Controller
 {
-    /**
-     * Menampilkan semua pengajuan magang.
-     */
     public function index()
     {
         $applications = Application::with(['user', 'position'])
@@ -20,9 +20,6 @@ class ApplicationController extends Controller
         return view('admin.applications.index', compact('applications'));
     }
 
-    /**
-     * Menampilkan detail pengajuan.
-     */
     public function show(Application $application)
     {
         $application->load(['user', 'position']);
@@ -31,59 +28,113 @@ class ApplicationController extends Controller
     }
 
     /**
-     * Menyetujui pengajuan.
+     * Menerima peserta dan mengurangi kuota.
      */
     public function approve(Request $request, Application $application)
-{
-    $request->validate([
-        'notes' => ['nullable', 'string', 'max:2000'],
-    ]);
+    {
+        $validated = $request->validate([
+            'notes' => ['nullable', 'string', 'max:2000'],
+        ]);
 
-    $application->update([
-        'status' => 'approved',
-        'notes' => $request->filled('notes')
-            ? $request->notes
-            : null,
-    ]);
+        DB::transaction(function () use ($application, $validated) {
+            $app = Application::whereKey($application->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-    return back()->with(
-        'success',
-        'Pengajuan berhasil disetujui.'
-    );
-}
+            // Jangan mengurangi kuota dua kali.
+            if ($app->status === 'approved') {
+                $app->update([
+                    'notes' => $validated['notes'] ?? null,
+                ]);
+
+                return;
+            }
+
+            $position = Position::whereKey($app->position_id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($position->quota <= 0) {
+                throw ValidationException::withMessages([
+                    'quota' => 'Kuota magang sudah habis.',
+                ]);
+            }
+
+            $position->decrement('quota', 1);
+
+            $app->update([
+                'status' => 'approved',
+                'notes' => $validated['notes'] ?? null,
+            ]);
+        });
+
+        return back()->with(
+            'success',
+            'Peserta berhasil diterima. Kuota berkurang 1.'
+        );
+    }
 
     /**
-     * Menolak pengajuan.
+     * Menolak peserta.
      */
     public function reject(Request $request, Application $application)
-{
-    $request->validate([
-        'notes' => ['nullable', 'string', 'max:2000'],
-    ]);
+    {
+        $validated = $request->validate([
+            'notes' => ['nullable', 'string', 'max:2000'],
+        ]);
 
-    $application->update([
-        'status' => 'rejected',
-        'notes' => $request->filled('notes')
-            ? $request->notes
-            : null,
-    ]);
+        DB::transaction(function () use ($application, $validated) {
+            $app = Application::whereKey($application->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-    return back()->with(
-        'success',
-        'Pengajuan berhasil ditolak.'
-    );
-}
+            // Jika sebelumnya diterima, kembalikan kuota.
+            if ($app->status === 'approved') {
+                Position::whereKey($app->position_id)
+                    ->lockForUpdate()
+                    ->firstOrFail()
+                    ->increment('quota', 1);
+            }
 
+            $app->update([
+                'status' => 'rejected',
+                'notes' => $validated['notes'] ?? null,
+            ]);
+        });
+
+        return back()->with(
+            'success',
+            'Pengajuan berhasil ditolak.'
+        );
+    }
+
+    /**
+     * Mengembalikan peserta ke status pending.
+     */
     public function pending(Application $application)
-{
-    $application->update([
-        'status' => 'pending',
-        'notes' => null,
-    ]);
+    {
+        DB::transaction(function () use ($application) {
+            $app = Application::whereKey($application->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-    return back()->with(
-        'success',
-        'Status pengajuan dikembalikan menjadi pending.'
-    );
-}
+            // Kembalikan kuota hanya jika status sebelumnya approved.
+            if ($app->status === 'approved') {
+                Position::whereKey($app->position_id)
+                    ->lockForUpdate()
+                    ->firstOrFail()
+                    ->increment('quota', 1);
+            }
+
+            $app->update([
+                'status' => 'pending',
+                'notes' => null,
+            ]);
+        });
+
+        return back()->with(
+            'success',
+            'Status dikembalikan menjadi pending.'
+        );
+    }
 }

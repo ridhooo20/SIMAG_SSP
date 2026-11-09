@@ -186,7 +186,7 @@
     <div class="relative mx-auto mt-10 max-w-7xl px-5 text-center lg:px-8">
 
         <p class="text-xs text-slate-400">
-            Jadilah bagian dari perjalanan magang bersama SSP dan abadikan momenmu di sini.
+            Berproses Tanpa Protes.
         </p>
 
     </div>

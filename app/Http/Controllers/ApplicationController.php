@@ -33,34 +33,34 @@ class ApplicationController extends Controller
             'end_date' => [
                 'required',
                 'date',
-                'after:start_date'
+                'after:start_date',
             ],
 
             'cover_letter' => [
                 'required',
                 'string',
-                'max:5000'
+                'max:5000',
             ],
 
             'company_document' => [
                 'required',
                 'file',
                 'mimes:pdf,doc,docx',
-                'max:5120'
+                'max:5120',
             ],
 
             'permission_letter' => [
                 'required',
                 'file',
                 'mimes:pdf,doc,docx',
-                'max:5120'
+                'max:5120',
             ],
 
             'portfolio' => [
                 'nullable',
                 'file',
                 'mimes:pdf,doc,docx',
-                'max:5120'
+                'max:5120',
             ],
         ]);
 
@@ -105,9 +105,9 @@ class ApplicationController extends Controller
         $validated['position_id'] = $position->id;
 
         $validated['registration_number'] =
-            'MAG-' .
-            date('Ymd') .
-            '-' .
+            'MAG-'.
+            date('Ymd').
+            '-'.
             strtoupper(substr(uniqid(), -6));
 
         // Default status
@@ -146,38 +146,38 @@ class ApplicationController extends Controller
     }
 
     public function track(Request $request)
-{
-    $request->validate([
-        'registration_number' => [
-            'required',
-            'string',
-            'max:50',
-        ],
-    ]);
-
-    $application = Application::with(['position', 'user'])
-        ->where(
-            'registration_number',
-            trim($request->registration_number)
-        )
-        ->first();
-
-    if (! $application) {
-        return back()
-            ->withInput()
-            ->with('tracking_error', 'Nomor pendaftaran tidak ditemukan.');
-    }
-
-    return back()
-        ->with('tracking_result', [
-            'registration_number' => $application->registration_number,
-            'status' => $application->status,
-            'position' => $application->position?->name,
-            'institution' => $application->institution,
-            'study_program' => $application->study_program,
-            'start_date' => $application->start_date?->format('d F Y'),
-            'end_date' => $application->end_date?->format('d F Y'),
-            'notes' => $application->notes,
+    {
+        $request->validate([
+            'registration_number' => [
+                'required',
+                'string',
+                'max:50',
+            ],
         ]);
-}
+
+        $application = Application::with(['position', 'user'])
+            ->where(
+                'registration_number',
+                trim($request->registration_number)
+            )
+            ->first();
+
+        if (! $application) {
+            return back()
+                ->withInput()
+                ->with('tracking_error', 'Nomor pendaftaran tidak ditemukan.');
+        }
+
+        return back()
+            ->with('tracking_result', [
+                'registration_number' => $application->registration_number,
+                'status' => $application->status,
+                'position' => $application->position?->name,
+                'institution' => $application->institution,
+                'study_program' => $application->study_program,
+                'start_date' => $application->start_date?->format('d F Y'),
+                'end_date' => $application->end_date?->format('d F Y'),
+                'notes' => $application->notes,
+            ]);
+    }
 }

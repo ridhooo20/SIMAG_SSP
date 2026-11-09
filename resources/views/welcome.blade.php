@@ -32,14 +32,12 @@
                     <h1
                         class="max-w-2xl text-4xl font-extrabold leading-[1.08] tracking-[-0.035em] text-slate-900 sm:text-5xl lg:text-[48px]">
 
-                        Wujudkan Karier Impian Melalui
+                        Langkah
 
                         <span class="text-[#0c57cc]">
-                            Program Magang
+                            Pasti,
                         </span>
-
-                        Bersertifikat SSP
-
+                        Hasil Berarti. SSP Beraksi
                     </h1>
 
 
@@ -158,7 +156,7 @@
                                 </p>
 
                                 <p class="mt-0.5 text-[10px] text-slate-500">
-                                    Divalidasi BUMN &amp; standar relevansi SKS Kampus Merdeka
+                                    Divalidasi oleh para profesional langsung
                                 </p>
 
                             </div>

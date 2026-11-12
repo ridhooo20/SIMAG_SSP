@@ -106,15 +106,15 @@
             </div>
 
             <div class="gallery-card gallery-wide">
-                <img src="{{ asset('images/gallery/magang-4.jpeg') }}" alt="Dokumentasi magang SSP" loading="lazy">
+                <img src="{{ asset('images/gallery/magang-10.jpeg') }}" alt="Dokumentasi magang SSP" loading="lazy">
             </div>
 
             <div class="gallery-card">
-                <img src="{{ asset('images/gallery/magang-5.jpeg') }}" alt="Dokumentasi magang SSP" loading="lazy">
+                <img src="{{ asset('images/gallery/magang-11.jpeg') }}" alt="Dokumentasi magang SSP" loading="lazy">
             </div>
 
             <div class="gallery-card gallery-wide">
-                <img src="{{ asset('images/gallery/magang-6.jpeg') }}" alt="Dokumentasi magang SSP" loading="lazy">
+                <img src="{{ asset('images/gallery/magang-12.jpeg') }}" alt="Dokumentasi magang SSP" loading="lazy">
             </div>
 
         </div>
@@ -128,15 +128,15 @@
 
             {{-- SET 1 --}}
             <div class="gallery-card gallery-wide">
-                <img src="{{ asset('images/gallery/magang-7.jpeg') }}" alt="Dokumentasi magang SSP" loading="lazy">
+                <img src="{{ asset('images/gallery/magang-13.jpeg') }}" alt="Dokumentasi magang SSP" loading="lazy">
             </div>
 
             <div class="gallery-card">
-                <img src="{{ asset('images/gallery/magang-8.jpeg') }}" alt="Dokumentasi magang SSP" loading="lazy">
+                <img src="{{ asset('images/gallery/magang-14.jpeg') }}" alt="Dokumentasi magang SSP" loading="lazy">
             </div>
 
             <div class="gallery-card gallery-wide">
-                <img src="{{ asset('images/gallery/magang-9.jpeg') }}" alt="Dokumentasi magang SSP" loading="lazy">
+                <img src="{{ asset('images/gallery/magang-10.jpeg') }}" alt="Dokumentasi magang SSP" loading="lazy">
             </div>
 
             <div class="gallery-card">
